@@ -50,7 +50,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVAudioPlayerDelegate
 //        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         
         sceneView.delegate = self
-//        sceneView.automaticallyUpdatesLighting = true
+        sceneView.autoenablesDefaultLighting = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,7 +74,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVAudioPlayerDelegate
         let result = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
         
         guard let hitResult = result.first else {return}
-        let mushroomScene = SCNScene(named: "art.scnassets/mushroom.scn")
+        let mushroomScene = SCNScene(named: "art.scnassets/mushroom\(mushroomChoice).scn")
         
         guard let mushroomNode = mushroomScene?.rootNode.childNode(withName: "mushroom\(mushroomChoice)", recursively: false) else {return}
         //生える位置
@@ -132,7 +132,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVAudioPlayerDelegate
             mushroomArray.removeAll()
             //効果音
             playAudio(name: "harvest")
-            print("\(mushroomArray.count)")
         } else {
             playAudio(name: "miss")
         }
@@ -140,20 +139,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, AVAudioPlayerDelegate
     
     //MARK: - Render function
     //平面（水平）を検知してグリッドを表示
-//    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-//        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
-//
-//        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
-//
-//        let planeNode = SCNNode()
-//        planeNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
-//        planeNode.transform = SCNMatrix4MakeRotation(-.pi/2, 1, 0, 0)
-//
-//        let gridMaterial = SCNMaterial()
-//        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
-//
-//        plane.materials = [gridMaterial]
-//        planeNode.geometry = plane
-//        node.addChildNode(planeNode)
-//    }
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+
+        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
+
+        let planeNode = SCNNode()
+        planeNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
+        planeNode.transform = SCNMatrix4MakeRotation(-.pi/2, 1, 0, 0)
+
+        let gridMaterial = SCNMaterial()
+        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
+
+        plane.materials = [gridMaterial]
+        planeNode.geometry = plane
+        node.addChildNode(planeNode)
+    }
 }
